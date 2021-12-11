@@ -1,3 +1,7 @@
+examples/classification/data/datasets.tar
+examples/classification/data/original/
+examples/results/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
