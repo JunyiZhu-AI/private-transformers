@@ -14,7 +14,7 @@ def _get_command(
     non_private,
     target_epsilon,
     few_shot_type,
-    per_device_train_batch_size=20,
+    per_device_train_batch_size=1,
     eval_steps=10,
 ):
     # This batch size selection roughly ensures the sampling rates on different
@@ -75,6 +75,7 @@ python -m classification.run_classification \
 def main(
     output_dir,
     task_name,
+    per_device_train_batch_size,
     few_shot_type="prompt",
     model_name_or_path="roberta-base",
     data_dir="classification/data/original",
@@ -91,6 +92,7 @@ def main(
         non_private=non_private,
         target_epsilon=target_epsilon,
         few_shot_type=few_shot_type,
+        per_device_train_batch_size=per_device_train_batch_size
     )
     print('Running command:')
     print(command)

@@ -456,6 +456,7 @@ class PrivacyEngine(object):
             if hasattr(param, "grad_sample"):
                 # This must be deleted due to how `privacy_utils::supported_layers_grad_samplers.py` works!
                 #   When a parameter with `.grad_sample` is reused, the per-sample gradients are accumulated!
+                param.grad_sample.mul_(0)
                 del param.grad_sample
             if hasattr(param, "grad"):
                 del param.grad
