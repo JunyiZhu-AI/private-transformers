@@ -19,6 +19,7 @@ def _get_command(
     per_device_train_batch_size=1,
     eval_steps=10,
     process=0,
+    epoch=6.0
 ):
     # This batch size selection roughly ensures the sampling rates on different
     # datasets are in the same ballpark.
@@ -74,7 +75,8 @@ python -m classification.run_classification \
   --first_sent_limit 200 --other_sent_limit 200 --truncate_head yes \
   --freeze_end {freeze_end} \
   --freeze_rate {freeze_rate} \
-  --process {process}
+  --process {process} \
+  --num_epoch {epoch}
     '''
 
 
@@ -90,7 +92,8 @@ def main(
     target_epsilon=8,
     freeze_end=-1,
     freeze_rate=0,
-    process=0
+    process=0,
+    epoch=6.0
 ):
     command = _get_command(
         output_dir=output_dir,
@@ -105,6 +108,7 @@ def main(
         few_shot_type=few_shot_type,
         per_device_train_batch_size=per_device_train_batch_size,
         process=process,
+        epoch=epoch
     )
     print('Running command:')
     print(command)
