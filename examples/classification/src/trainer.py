@@ -377,16 +377,17 @@ class Trainer(transformers.Trainer):
             num_params = privacy_engine.num_params
             # tmp_mask = torch.randperm(num_params, device=self.args.device, dtype=torch.long)[:int(rate * num_params)]
             # mask = torch.ones(num_params, device=self.args.device)
-            tmp_mask = torch.randperm(num_params, device='cpu', dtype=torch.long)[:int(rate * num_params)]
-            mask = torch.ones(num_params, device='cpu')
+            tmp_mask = torch.randperm(num_params, device=self.args.device, dtype=torch.long)[:int(rate * num_params)]
+            mask = torch.ones(num_params, device=self.args.device)
             mask[tmp_mask] = 0
             num = 0
-            freeze_mask = []
+            if hasattr(privacy_engine, 'freeze_mask'):
+                del privacy_engine.freeze_mask
+            privacy_engine.freeze_mask = []
             for _, p in privacy_engine.named_params:
-                freeze_mask.append(mask[num:num + p.numel()].reshape(p.shape))
+                privacy_engine.freeze_mask.append(mask[num:num + p.numel()].reshape(p.shape))
                 num += p.numel()
             assert num == num_params
-            privacy_engine.freeze_mask = freeze_mask
             # print('+++++++++++++++++++')
             # print(f'freeze rate: {rate}  freeze end: {self.args.freeze_end}')
             # print(privacy_engine.freeze_mask)

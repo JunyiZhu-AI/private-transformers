@@ -432,7 +432,7 @@ class PrivacyEngine(object):
         if self.record_snr and noises:
             self.signal, self.noise = tuple(torch.stack(lst).norm(2).item() for lst in (signals, noises))
             self.noise_limit = math.sqrt(self.num_params) * self.noise_multiplier * self.max_grad_norm
-            self.snr = self.signal / self.noise
+            self.snr = self.signal / (self.noise + 1e-12)
         else:
             self.snr = math.inf  # Undefined!
 
