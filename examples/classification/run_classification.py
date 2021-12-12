@@ -409,7 +409,7 @@ def main():
     logger.info("Training/evaluation parameters %s", training_args)
 
     # Set seed
-    set_seed(training_args.seed)
+    set_seed(training_args.process)
 
     try:
         num_labels = num_labels_mapping[data_args.task_name]
