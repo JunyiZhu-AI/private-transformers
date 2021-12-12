@@ -21,6 +21,7 @@ import collections
 import json
 import os
 from typing import Dict, Optional, Any, Union
+import numpy as np
 
 from packaging import version
 from swissknife import utils
@@ -246,7 +247,7 @@ class Trainer(transformers.Trainer):
             num_train_epochs=num_train_epochs
         )
 
-    def train(self, model_path=None, dev_objective=None, dev_objective_key=None):
+    def train(self, privacy_engine, model_path=None, dev_objective=None, dev_objective_key=None):
         """
         Main training entry point.
 
@@ -368,6 +369,28 @@ class Trainer(transformers.Trainer):
             #   This is ultra important when using gradient accumulation, since grads of micro batches could ooze.
             model.zero_grad(set_to_none=True)
             # ---
+            # compute current gradual exit rate
+            rate = np.clip(self.args.freeze_rate * epoch / (self.args.freeze_end - 1),
+                           0, self.args.freeze_rate) if self.args.freeze_end >= 0 else self.args.freeze_rate
+
+            # num_params = sum(param.numel() for _, param in model.named_parameters() if param.requires_grad)
+            num_params = privacy_engine.num_params
+            # tmp_mask = torch.randperm(num_params, device=self.args.device, dtype=torch.long)[:int(rate * num_params)]
+            # mask = torch.ones(num_params, device=self.args.device)
+            tmp_mask = torch.randperm(num_params, device='cpu', dtype=torch.long)[:int(rate * num_params)]
+            mask = torch.ones(num_params, device='cpu')
+            mask[tmp_mask] = 0
+            num = 0
+            freeze_mask = []
+            for _, p in privacy_engine.named_params:
+                freeze_mask.append(mask[num:num + p.numel()].reshape(p.shape))
+                num += p.numel()
+            assert num == num_params
+            privacy_engine.freeze_mask = freeze_mask
+            # print('+++++++++++++++++++')
+            # print(f'freeze rate: {rate}  freeze end: {self.args.freeze_end}')
+            # print(privacy_engine.freeze_mask)
+            # print('+++++++++++++++++++')
 
             if isinstance(train_dataloader, DataLoader) and isinstance(train_dataloader.sampler, DistributedSampler):
                 train_dataloader.sampler.set_epoch(epoch)

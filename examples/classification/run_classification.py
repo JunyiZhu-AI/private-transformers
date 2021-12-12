@@ -66,9 +66,7 @@ class ModelArguments:
         default=False,
         metadata={"help": "Whether to reinitialize the token type embeddings (only for BERT)."}
     )
-
     static_embedding: bool = field(default=False)
-
 
 @dataclass
 class DynamicDataTrainingArguments(DataTrainingArguments):
@@ -237,6 +235,21 @@ class DynamicDataTrainingArguments(DataTrainingArguments):
 
 @dataclass
 class DynamicTrainingArguments(TrainingArguments):
+    # For random freeze
+    freeze_end: int = field(
+        default=-1,
+        metadata={"help": "Gradual exit end epoch."}
+    )
+
+    freeze_rate: float = field(
+        default=0,
+        metadata={"help": "Percentage of paramters get exited finally."}
+    )
+
+    process: int = field(
+        default=0,
+        metadata={"help": "Seed."}
+    )
     # For ensemble
     array_id: int = field(
         default=-1,
@@ -539,7 +552,7 @@ def main():
             print(f'{_tag}: {len(_ds)}')
     print(f" ***")
 
-    set_seed(training_args.seed)
+    set_seed(training_args.process)
 
     model = model_fn.from_pretrained(
         model_args.model_name_or_path,
@@ -632,6 +645,7 @@ def main():
     else:
         trainer.lr_scheduler = torch.optim.lr_scheduler.LambdaLR(trainer.optimizer, lambda _: 1.)
 
+    privacy_engine = None
     if privacy_args.non_private:
         # lxuechen: Needed for RGP.
         privacy_args.noise_multiplier = 0.
@@ -670,7 +684,7 @@ def main():
         print(data_args.template)
 
         # Don't reload.
-        trainer.train(model_path=None)
+        trainer.train(privacy_engine=privacy_engine, model_path=None)
         # Use the early stop, so do not save the model in the end (unless specify save_at_last)
         if training_args.save_at_last:
             trainer.save_model(training_args.output_dir)

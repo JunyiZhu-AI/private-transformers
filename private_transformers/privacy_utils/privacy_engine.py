@@ -400,7 +400,7 @@ class PrivacyEngine(object):
 
         # Add noise and scale by inverse batch size.
         signals, noises = [], []
-        for name, param in self.named_params:
+        for (name, param), mask in zip(self.named_params, self.freeze_mask):
             if hasattr(param, 'summed_grad'):  # Ultra important to override `.grad`.
                 param.grad = param.summed_grad.to(param.dtype)
             else:
@@ -420,10 +420,11 @@ class PrivacyEngine(object):
                     size=param.size(),
                     device=param.device,
                     dtype=param.dtype,
-                )
+                ).mul(mask)
                 if self.record_snr:
                     noises.append(noise.reshape(-1).norm(2))
                 param.grad += noise
+                assert torch.all(param.grad[torch.logical_not(mask.type(torch.bool))] == 0)
                 del noise
 
             param.grad /= self.batch_size
@@ -470,7 +471,7 @@ class PrivacyEngine(object):
             loss.sum(dim=0).backward()
 
         norm_sample = []
-        for name, param in self.named_params:
+        for (name, param), mask in zip(self.named_params, self.freeze_mask):
             try:
                 batch_size = param.grad_sample.size(0)
             except AttributeError as error:
@@ -478,6 +479,8 @@ class PrivacyEngine(object):
                 extra_msg = f"\n *** {name} parameter has no grad_sample attribute ***"
                 error.args = (args[0] + extra_msg, *args[1:])
                 raise error
+            for g in param.grad_sample:
+                g.data.mul_(mask)
             norm = param.grad_sample.reshape(batch_size, -1).norm(2, dim=1)
             norm_sample.append(norm)
 

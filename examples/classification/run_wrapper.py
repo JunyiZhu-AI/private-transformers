@@ -14,8 +14,11 @@ def _get_command(
     non_private,
     target_epsilon,
     few_shot_type,
+    freeze_end,
+    freeze_rate,
     per_device_train_batch_size=1,
     eval_steps=10,
+    process=0,
 ):
     # This batch size selection roughly ensures the sampling rates on different
     # datasets are in the same ballpark.
@@ -68,7 +71,10 @@ python -m classification.run_classification \
   --max_seq_len 256 \
   --evaluation_strategy steps --eval_steps {eval_steps} --evaluate_before_training True \
   --do_train --do_eval \
-  --first_sent_limit 200 --other_sent_limit 200 --truncate_head yes
+  --first_sent_limit 200 --other_sent_limit 200 --truncate_head yes \
+  --freeze_end {freeze_end} \
+  --freeze_rate {freeze_rate} \
+  --process {process}
     '''
 
 
@@ -82,6 +88,9 @@ def main(
     ghost_clipping="yes",
     non_private="no",
     target_epsilon=8,
+    freeze_end=-1,
+    freeze_rate=0,
+    process=0
 ):
     command = _get_command(
         output_dir=output_dir,
@@ -91,8 +100,11 @@ def main(
         ghost_clipping=ghost_clipping,
         non_private=non_private,
         target_epsilon=target_epsilon,
+        freeze_end=freeze_end,
+        freeze_rate=freeze_rate,
         few_shot_type=few_shot_type,
-        per_device_train_batch_size=per_device_train_batch_size
+        per_device_train_batch_size=per_device_train_batch_size,
+        process=process,
     )
     print('Running command:')
     print(command)
