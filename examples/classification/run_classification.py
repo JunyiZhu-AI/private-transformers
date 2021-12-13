@@ -235,6 +235,10 @@ class DynamicDataTrainingArguments(DataTrainingArguments):
 
 @dataclass
 class DynamicTrainingArguments(TrainingArguments):
+    seed: int = field(
+        default=0,
+        metadata={"help": "Seed."}
+    )
     # For random freeze
     freeze_end: int = field(
         default=-1,
@@ -251,10 +255,6 @@ class DynamicTrainingArguments(TrainingArguments):
         metadata={"help": "Number of training epoches."}
     )
 
-    process: int = field(
-        default=0,
-        metadata={"help": "Seed."}
-    )
     # For ensemble
     array_id: int = field(
         default=-1,
@@ -409,7 +409,13 @@ def main():
     logger.info("Training/evaluation parameters %s", training_args)
 
     # Set seed
-    set_seed(training_args.process)
+    # seed = np.random.randint(0, 1000000)
+    # set_seed(seed)
+    # random.seed(seed)
+    # np.random.seed(seed)
+    # torch.manual_seed(seed)
+    # torch.cuda.manual_seed_all(seed)
+
 
     try:
         num_labels = num_labels_mapping[data_args.task_name]
@@ -557,7 +563,7 @@ def main():
             print(f'{_tag}: {len(_ds)}')
     print(f" ***")
 
-    set_seed(training_args.process)
+    # set_seed(seed)
 
     model = model_fn.from_pretrained(
         model_args.model_name_or_path,
