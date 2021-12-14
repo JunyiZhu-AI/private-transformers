@@ -239,6 +239,10 @@ class DynamicTrainingArguments(TrainingArguments):
         default=0,
         metadata={"help": "Seed."}
     )
+    adam_beta1: float = field(
+        default=0.9,
+        metadata={"help": "Factor of the first order momentum."}
+    )
     # For random freeze
     freeze_end: int = field(
         default=-1,

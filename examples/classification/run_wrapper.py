@@ -19,7 +19,9 @@ def _get_command(
     per_device_train_batch_size=1,
     eval_steps=10,
     seed=0,
-    epoch=6.0
+    epoch=6.0,
+    clip=0.1,
+    momentum=0.9,
 ):
     # This batch size selection roughly ensures the sampling rates on different
     # datasets are in the same ballpark.
@@ -64,7 +66,7 @@ python -m classification.run_classification \
   --per_device_train_batch_size {per_device_train_batch_size} \
   --gradient_accumulation_steps {gradient_accumulation_steps} \
   --per_device_eval_batch_size 8 \
-  --per_example_max_grad_norm 0.1 --ghost_clipping {ghost_clipping} \
+  --per_example_max_grad_norm {clip} --ghost_clipping {ghost_clipping} \
   --learning_rate 0.0005 \
   --lr_decay yes \
   --adam_epsilon 1e-08 \
@@ -76,7 +78,8 @@ python -m classification.run_classification \
   --freeze_end {freeze_end} \
   --freeze_rate {freeze_rate} \
   --seed {seed} \
-  --num_epoch {epoch}
+  --num_epoch {epoch} \
+  --adam_beta1 {momentum}
     '''
 
 
@@ -93,7 +96,9 @@ def main(
     freeze_end=-1,
     freeze_rate=0,
     seed=0,
-    epoch=6.0
+    epoch=6.0,
+    momentum=0.9,
+    clip=0.1,
 ):
     command = _get_command(
         output_dir=output_dir,
@@ -108,7 +113,9 @@ def main(
         few_shot_type=few_shot_type,
         per_device_train_batch_size=per_device_train_batch_size,
         seed=seed,
-        epoch=epoch
+        epoch=epoch,
+        momentum=momentum,
+        clip=clip
     )
     print('Running command:')
     print(command)
