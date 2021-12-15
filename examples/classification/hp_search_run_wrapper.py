@@ -62,7 +62,7 @@ python -m classification.run_classification \
   --num_sample 1 --seed 0 \
   --template {template} \
   --non_private {non_private} \
-  --num_train_epochs 6 \
+  --num_train_epochs {epoch} \
   --target_epsilon {target_epsilon} \
   --per_device_train_batch_size {per_device_train_batch_size} \
   --gradient_accumulation_steps {gradient_accumulation_steps} \
@@ -79,7 +79,6 @@ python -m classification.run_classification \
   --freeze_end {freeze_end} \
   --freeze_rate {freeze_rate} \
   --seed {seed} \
-  --num_epoch {epoch} \
   --adam_beta1 {momentum} \
   --per_device_eval_batch_size {per_device_eval_batch_size}
     '''

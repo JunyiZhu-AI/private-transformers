@@ -254,11 +254,6 @@ class DynamicTrainingArguments(TrainingArguments):
         metadata={"help": "Percentage of paramters get exited finally."}
     )
 
-    num_epoch: float = field(
-        default=6.0,
-        metadata={"help": "Number of training epoches."}
-    )
-
     # For ensemble
     array_id: int = field(
         default=-1,
@@ -665,7 +660,7 @@ def main():
             module=model,
             batch_size=total_train_batch_size,
             sample_size=len(train_dataset),
-            epochs=training_args.num_epoch,
+            epochs=training_args.num_train_epochs,
             max_grad_norm=privacy_args.per_example_max_grad_norm,
             noise_multiplier=privacy_args.noise_multiplier,
             target_epsilon=privacy_args.target_epsilon,
