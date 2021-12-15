@@ -413,13 +413,7 @@ def main():
     logger.info("Training/evaluation parameters %s", training_args)
 
     # Set seed
-    # seed = np.random.randint(0, 1000000)
-    # set_seed(seed)
-    # random.seed(seed)
-    # np.random.seed(seed)
-    # torch.manual_seed(seed)
-    # torch.cuda.manual_seed_all(seed)
-
+    set_seed(training_args.seed)
 
     try:
         num_labels = num_labels_mapping[data_args.task_name]
@@ -567,7 +561,7 @@ def main():
             print(f'{_tag}: {len(_ds)}')
     print(f" ***")
 
-    # set_seed(seed)
+    set_seed(training_args.seed)
 
     model = model_fn.from_pretrained(
         model_args.model_name_or_path,
