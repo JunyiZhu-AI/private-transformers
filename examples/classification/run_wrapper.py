@@ -17,6 +17,7 @@ def _get_command(
     freeze_end,
     freeze_rate,
     per_device_train_batch_size=1,
+    per_device_eval_batch_size=50,
     eval_steps=10,
     seed=0,
     epoch=6.0,
@@ -79,7 +80,8 @@ python -m classification.run_classification \
   --freeze_rate {freeze_rate} \
   --seed {seed} \
   --num_epoch {epoch} \
-  --adam_beta1 {momentum}
+  --adam_beta1 {momentum} \
+  --per_device_eval_batch_size {per_device_eval_batch_size}
     '''
 
 
@@ -112,6 +114,7 @@ def main(
         freeze_rate=freeze_rate,
         few_shot_type=few_shot_type,
         per_device_train_batch_size=per_device_train_batch_size,
+        per_device_eval_batch_size=50,
         seed=seed,
         epoch=epoch,
         momentum=momentum,
