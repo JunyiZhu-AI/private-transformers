@@ -378,8 +378,8 @@ class Trainer(transformers.Trainer):
             # tmp_mask = torch.randperm(num_params, device=self.args.device, dtype=torch.long)[:int(rate * num_params)]
             # mask = torch.ones(num_params, device=self.args.device)
             tmp_mask = torch.randperm(num_params, device=self.args.device, dtype=torch.long)[:int(rate * num_params)]
-            mask = torch.ones(num_params, device=self.args.device)
-            mask[tmp_mask] = 0
+            mask = torch.ones(num_params, device=self.args.device, dtype=torch.bool)
+            mask[tmp_mask] = False
             num = 0
             if hasattr(privacy_engine, 'freeze_mask'):
                 del privacy_engine.freeze_mask

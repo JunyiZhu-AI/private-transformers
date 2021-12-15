@@ -424,7 +424,7 @@ class PrivacyEngine(object):
                 if self.record_snr:
                     noises.append(noise.reshape(-1).norm(2))
                 param.grad += noise
-                assert torch.all(param.grad[torch.logical_not(mask.type(torch.bool))] == 0)
+                assert torch.all(param.grad[torch.logical_not(mask)] == 0)
                 del noise
 
             param.grad /= self.batch_size
