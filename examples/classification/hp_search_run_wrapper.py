@@ -23,6 +23,7 @@ def _get_command(
     epoch=6.0,
     clip=0.1,
     momentum=0.9,
+    weight_decay=1e-2
 ):
     # This batch size selection roughly ensures the sampling rates on different
     # datasets are in the same ballpark.
@@ -80,7 +81,8 @@ python -m classification.run_classification \
   --freeze_rate {freeze_rate} \
   --seed {seed} \
   --adam_beta1 {momentum} \
-  --per_device_eval_batch_size {per_device_eval_batch_size}
+  --per_device_eval_batch_size {per_device_eval_batch_size} \
+  --weight_decay {weight_decay}
     '''
 
 
@@ -124,7 +126,8 @@ def main(
         seed=0,
         epoch=epoch,
         momentum=momentum,
-        clip=clip
+        clip=clip,
+        weight_decay=0,
     )
     print('Running command:')
     print(command)

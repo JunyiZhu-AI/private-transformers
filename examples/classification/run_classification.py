@@ -243,6 +243,10 @@ class DynamicTrainingArguments(TrainingArguments):
         default=0.9,
         metadata={"help": "Factor of the first order momentum."}
     )
+    weight_decay: float = field(
+        default=1e-2,
+        metadata={"help": "Adam weight decay coefficient."}
+    )
     # For random freeze
     freeze_end: int = field(
         default=-1,
