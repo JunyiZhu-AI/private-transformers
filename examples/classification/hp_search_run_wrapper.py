@@ -101,7 +101,7 @@ def main(
     momentum=0.9,
     clip=0.1,
 ):
-    rate = [0.3, 0.5, 0.7, 0.9]
+    rate = [0.3, 0.5, 0.7, 0.9, 0]
     e = [epoch, float(math.ceil(epoch * 1.2))]
     m = [momentum, 0]
     combinations = []
